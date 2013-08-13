@@ -1,0 +1,3 @@
+cd ../build/
+g++ -c ../src/main.cpp ../src/load_points.cpp
+g++ -o PointViewer main.o load_points.o -lglfw
