@@ -30,25 +30,25 @@ void resetPoints(Points *pPset, double *pDims){
 
 }
 
-void drawaxes();
+void drawaxes(float *pxax, float *pyax, float *pzax);
 
-void drawaxes(){
+void drawaxes(float *pxax, float *pyax, float *pzax){
 	glBegin(GL_LINES);
 	glColor3ub(255,0,0);
-	glVertex3f(0.f,0.f,0.f);
-	glVertex3f(0.f,0.f,0.5f);
+	glVertex3f(0.f * pzax[0], 0.f * pzax[1],0.f * pzax[2]);
+	glVertex3f(0.1f * pzax[0], 0.1f * pzax[1], 0.1f * pzax[2]);
 	glEnd();
 
 	glBegin(GL_LINES);
 	glColor3ub(0,255,0);
-	glVertex3f(0.f,0.f,0.f);
-	glVertex3f(0.f,0.5f,0.f);
+	glVertex3f(0.f * pyax[0], 0.f * pyax[1], 0.f * pyax[2]);
+	glVertex3f(0.1f * pyax[0], 0.1f * pyax[1], 0.1f * pyax[2]);
 	glEnd();
 
 	glBegin(GL_LINES);
 	glColor3ub(0,0,255);
-	glVertex3f(0.f,0.f,0.f);
-	glVertex3f(0.5f,0.f,0.f);
+	glVertex3f(0.0f * pxax[0], 0.0f * pxax[1], 0.0f * pxax[2]);
+	glVertex3f(0.1f * pxax[0], 0.1f * pxax[1], 0.1f * pxax[2]);
 	glEnd();
 	}
 
@@ -58,7 +58,7 @@ int main( int argc, char** argv ){
 	float xaxis[3]={1.f, 0.f, 0.f}, yaxis[3]={0.f, 1.f, 0.f}, zaxis[3]={0.f, 0.f, 1.f};
 	float cos1=cos( 1.f/180 * 3.141592 ), sin1=sin( 1.f/180 * 3.141592);
    	double dims[5];
-	bool down=false;
+	bool cdown=false;
 	GLfloat currentModelMatrix[16];
 	std::string userCommand;
 	
@@ -91,13 +91,13 @@ int main( int argc, char** argv ){
 //	glEnable( GL_LIGHT1 );
 
 	glPointSize( 1.0f );
-	glOrtho(-1,1,-1,1,-10,10);
+	glOrtho(-10,10,-10,10,-10,10);
 	
 	while( glfwGetKey(  GLFW_KEY_ESC ) != GLFW_PRESS && glfwGetWindowParam(GLFW_OPENED) ){
 		glClearColor( 0.160f, 0.0f, 0.120f, 0.0f);
 		glClear( GL_COLOR_BUFFER_BIT );
 		resetPoints(&P, dims);
-		drawaxes();
+		drawaxes(xaxis, yaxis, zaxis);
 		glDrawArrays(GL_POINTS, 0, 3);
 		glDrawArrays(GL_LINES,0,3);
 		glfwSwapBuffers();
@@ -153,14 +153,38 @@ glRotatef(yRotation, currentModelViewMatrix[0], currentModelViewMatrix[4], curre
 	
 		else if( glfwGetKey( 'R' ) == GLFW_PRESS ){
 			glLoadIdentity();//reset view
+
+			glGetFloatv(GL_MODELVIEW_MATRIX, currentModelMatrix);//reset vectors
+			xaxis[0]=currentModelMatrix[0];
+			xaxis[1]=currentModelMatrix[4];
+			xaxis[2]=currentModelMatrix[8];
+			yaxis[0]=currentModelMatrix[1];
+			yaxis[1]=currentModelMatrix[5];
+			yaxis[2]=currentModelMatrix[9];
+			zaxis[0]=currentModelMatrix[2];
+			zaxis[1]=currentModelMatrix[6];
+			zaxis[2]=currentModelMatrix[10];
+	}
+
+		else if( glfwGetKey( 'G' ) == GLFW_PRESS ){
+			glGetFloatv(GL_MODELVIEW_MATRIX, currentModelMatrix);//reset vectors
+			xaxis[0]=currentModelMatrix[0];
+			xaxis[1]=currentModelMatrix[4];
+			xaxis[2]=currentModelMatrix[8];
+			yaxis[0]=currentModelMatrix[1];
+			yaxis[1]=currentModelMatrix[5];
+			yaxis[2]=currentModelMatrix[9];
+			zaxis[0]=currentModelMatrix[2];
+			zaxis[1]=currentModelMatrix[6];
+			zaxis[2]=currentModelMatrix[10];
 		}
 
-		else if( glfwGetKey( 'C' ) == GLFW_PRESS & !down ){
+		else if( glfwGetKey( 'C' ) == GLFW_PRESS & !cdown ){
 			dims[4] = float(int( dims[4] + 1 ) % 3);
-			down=true;
+			cdown=true;
 		}		
 		else if( glfwGetKey( 'C' ) == GLFW_RELEASE ){
-			down=false;
+			cdown=false;
 		}	
 		else if( glfwGetKey( '/' ) == GLFW_RELEASE ){
 		//bring up user terminal
