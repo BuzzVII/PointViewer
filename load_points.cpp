@@ -11,8 +11,8 @@ void load_points(Points *pP, double *pDim){
 		if (xyz<7) getline(PointFile, value, ' ');
 		else getline(PointFile,value);
 		switch(xyz){
-			case 0:out.x=atof(value.c_str());
-				if(out.x<1) std::cout << index << std::endl;
+			case 0: if(atof(value.c_str())==0) break;
+				out.x=atof(value.c_str());
 				xmax=std::max(out.x,xmax);
 				xmin=std::min(out.x,xmin);
 				break;
@@ -45,7 +45,14 @@ void load_points(Points *pP, double *pDim){
 
 	std::cout << "Point load finished" << std::endl;	
 	pDim[0]=std::max(xmax-xmin,std::max(ymax-ymin,zmax-zmin));
+	std::cout << pDim[0] << std::endl;
 	pDim[1]=xmin;
+	std::cout << pDim[1] << std::endl;
+	std::cout << xmax << std::endl;
 	pDim[2]=ymin;
+	std::cout << pDim[2] << std::endl;
+	std::cout << ymax << std::endl;
 	pDim[3]=zmin;
+	std::cout << pDim[3] << std::endl;
+	std::cout << zmax << std::endl;
 }

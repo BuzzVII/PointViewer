@@ -23,7 +23,7 @@ void resetPoints(Points *pPset, double *pDims){
 		if(pDims[4]==1) glColor3ub((*pPset)[count].r, (*pPset)[count].g, (*pPset)[count].b);
 		else if(pDims[4]==0) glColor3ub((*pPset)[count].I, (*pPset)[count].I, (*pPset)[count].I);
 		else glColor3ub(100,100,100);
-		glVertex3f( ( (*pPset)[count].x - pDims[1] )/ pDims[0] * 2.f -1.f , ((*pPset)[count].z - pDims[3]) / pDims[0] * 2.f - 1.f, ( (*pPset)[count].y - pDims[2]) / pDims[0] *2.f - 1.f );
+		glVertex3f( ( (*pPset)[count].x - pDims[1] ) / pDims[0]  * 2.f -1.f , ((*pPset)[count].z - pDims[3]) / pDims[0] * 2.f - 1.f, ( (*pPset)[count].y - pDims[2]) / pDims[0] * 2.f - 1.f );
 	}
 
 	glEnd();
@@ -53,7 +53,7 @@ void drawaxes(float *pxax, float *pyax, float *pzax){
 	}
 
 int main( int argc, char** argv ){
-	int input;
+	int input,speed=1;
 	float sign=1.0f;
 	float xaxis[3]={1.f, 0.f, 0.f}, yaxis[3]={0.f, 1.f, 0.f}, zaxis[3]={0.f, 0.f, 1.f};
 	float cos1=cos( 1.f/180 * 3.141592 ), sin1=sin( 1.f/180 * 3.141592);
@@ -91,10 +91,11 @@ int main( int argc, char** argv ){
 //	glEnable( GL_LIGHT1 );
 
 	glPointSize( 1.0f );
-	glOrtho(-10,10,-10,10,-10,10);
+	glOrtho(-100,100,-100,100,-1000,1000);
 	
 	while( glfwGetKey(  GLFW_KEY_ESC ) != GLFW_PRESS && glfwGetWindowParam(GLFW_OPENED) ){
-		glClearColor( 0.160f, 0.0f, 0.120f, 0.0f);
+		//glClearColor( 0.160f, 0.0f, 0.120f, 0.0f);
+		glClearColor( 0.1f, 0.1f, 0.1f, 0.1f);
 		glClear( GL_COLOR_BUFFER_BIT );
 		resetPoints(&P, dims);
 		drawaxes(xaxis, yaxis, zaxis);
@@ -111,44 +112,47 @@ glRotatef(yRotation, currentModelViewMatrix[0], currentModelViewMatrix[4], curre
 
 	
 /* Need to calculate the current axis based on the previous key presses then update each rotate etc to be around the appropriate axis*/
-		if(  glfwGetKey( GLFW_KEY_SPACE ) == GLFW_PRESS ){ 
-			if( glfwGetKey(   GLFW_KEY_RCTRL ) == GLFW_PRESS ){
-				glRotatef(1.f, zaxis[0], zaxis[1], zaxis[2]);
-			}
+		if(  glfwGetKey( GLFW_KEY_UP ) == GLFW_PRESS ){ 
+			if( glfwGetKey(  GLFW_KEY_RCTRL ) == GLFW_PRESS ) glTranslatef( 0.1 * yaxis[0], 0.1 * yaxis[1], 0.1 * yaxis[2]);
 			else {
-				glRotatef(-1.f, zaxis[0], zaxis[1], zaxis[2]);
-			}
-		}
-		else if(  glfwGetKey( GLFW_KEY_UP ) == GLFW_PRESS ){ 
-			if( glfwGetKey(  GLFW_KEY_RCTRL ) == GLFW_PRESS ) glTranslatef(0.f, 0.1f, 0.f);
-			else {
-				glRotatef(-1.f, xaxis[0], xaxis[1], xaxis[2]);
+				glRotatef(-1.f * float( speed ), xaxis[0], xaxis[1], xaxis[2]);
 			}
 		}
 		else if(  glfwGetKey( GLFW_KEY_DOWN ) == GLFW_PRESS ){ 
-			if( glfwGetKey(   GLFW_KEY_RCTRL ) == GLFW_PRESS ) glTranslatef(0.f, -0.1f, 0.f);
+			if( glfwGetKey(   GLFW_KEY_RCTRL ) == GLFW_PRESS ) glTranslatef(-0.1 * yaxis[0],-0.1 * yaxis[1],-0.1 * yaxis[2]);
 			else {
-				glRotatef(1.f, xaxis[0], xaxis[1], xaxis[2]);
+				glRotatef(1.f * float( speed ), xaxis[0], xaxis[1], xaxis[2]);
 			}
 		}
 		else if(  glfwGetKey( GLFW_KEY_LEFT ) == GLFW_PRESS ){ 
-			if( glfwGetKey(   GLFW_KEY_RCTRL ) == GLFW_PRESS ) glTranslatef(0.1f, 0.f, 0.f);
+			if( glfwGetKey(   GLFW_KEY_RCTRL ) == GLFW_PRESS ) glTranslatef(-0.1 * xaxis[0],-0.1 * xaxis[1],-0.1 * xaxis[2]);
 			else {
-				glRotatef(-1.f, yaxis[0], yaxis[1], yaxis[2]);
+				glRotatef(-1.f * float( speed ), yaxis[0], yaxis[1], yaxis[2]);
 			}
 		}
 		else if(  glfwGetKey( GLFW_KEY_RIGHT ) == GLFW_PRESS ){ 
-			if( glfwGetKey(   GLFW_KEY_RCTRL ) == GLFW_PRESS ) glTranslatef(-0.1f, 0.f, 0.f);
+			if( glfwGetKey(   GLFW_KEY_RCTRL ) == GLFW_PRESS ) glTranslatef(0.1 * xaxis[0],0.1 * xaxis[1],0.1 * xaxis[2]);
 			else {
-				glRotatef(1.f, yaxis[0], yaxis[1], yaxis[2]);
+				glRotatef(1.f * float( speed ), yaxis[0], yaxis[1], yaxis[2]);
+			}
+		}	
+		else if(  glfwGetKey( 'A' ) == GLFW_PRESS ){ 
+			if( glfwGetKey(   GLFW_KEY_RCTRL ) == GLFW_PRESS ) glTranslatef(0.1 * zaxis[0],0.1 * zaxis[1],0.1 * zaxis[2]);
+			else {
+				glRotatef(1.f * float( speed ), zaxis[0], zaxis[1], zaxis[2]);
 			}
 		}
-		else if(  glfwGetMouseButton(   GLFW_MOUSE_BUTTON_1 ) == 1 ){ 
-			glScalef( pow(1.1f,1) , pow(1.1f,1) , pow(1.1f,1) );
-	
+		else if(  glfwGetKey( 'Z' ) == GLFW_PRESS ){ 
+			if( glfwGetKey(   GLFW_KEY_RCTRL ) == GLFW_PRESS ) glTranslatef(-0.1 * zaxis[0],-0.1 * zaxis[1],-0.1 * zaxis[2]);
+			else {
+				glRotatef(-1.f * float( speed ), zaxis[0], zaxis[1], zaxis[2]);
+			}
 		}
-		else if(  glfwGetMouseButton(   GLFW_MOUSE_BUTTON_2 ) == 1 ){ 
-			glScalef( pow(1.1f,-1) , pow(1.1f,-1) , pow(1.1f,-1) );
+		else if(  glfwGetKey( GLFW_KEY_SPACE ) == GLFW_PRESS ){ 
+			if( glfwGetKey(   GLFW_KEY_RCTRL ) == GLFW_PRESS ) glScalef( pow(1.1f * float( speed ),1) , pow(1.1f * float( speed ),1) , pow(1.1f * float( speed ),1) );
+			else {
+				glScalef( pow(0.9f / float( speed ),1) , pow(0.9f / float( speed ),1) , pow(0.9f / float( speed ),1) );
+			}
 		}
 	
 		else if( glfwGetKey( 'R' ) == GLFW_PRESS ){
@@ -164,7 +168,7 @@ glRotatef(yRotation, currentModelViewMatrix[0], currentModelViewMatrix[4], curre
 			zaxis[0]=currentModelMatrix[2];
 			zaxis[1]=currentModelMatrix[6];
 			zaxis[2]=currentModelMatrix[10];
-	}
+		}
 
 		else if( glfwGetKey( 'G' ) == GLFW_PRESS ){
 			glGetFloatv(GL_MODELVIEW_MATRIX, currentModelMatrix);//reset vectors
@@ -186,9 +190,18 @@ glRotatef(yRotation, currentModelViewMatrix[0], currentModelViewMatrix[4], curre
 		else if( glfwGetKey( 'C' ) == GLFW_RELEASE ){
 			cdown=false;
 		}	
+		else if( glfwGetKey( '1' ) == GLFW_RELEASE ){
+		speed=1;
+		}
+		else if( glfwGetKey( '2' ) == GLFW_RELEASE ){
+		speed=10;
+		}
+		else if( glfwGetKey( '3' ) == GLFW_RELEASE ){
+		speed=100;
+		}
 		else if( glfwGetKey( '/' ) == GLFW_RELEASE ){
 		//bring up user terminal
-		}
+		}  
 	}
 	
 	std::cout << "terminating GLFW" << std::endl;
