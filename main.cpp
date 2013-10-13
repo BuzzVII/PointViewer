@@ -16,13 +16,12 @@
 
 void resetPoints(Points *pPset, double *pDims);
 
-void resetPoints(Points *pPset, double *pDims){
-
+void resetPoints(Points *pPset, double *pDims, int maxid){
 	glBegin(GL_POINTS);
 	for(int count=0;count < (*pPset).size();count++){
 		if(pDims[4]==1) glColor3ub((*pPset)[count].r, (*pPset)[count].g, (*pPset)[count].b);
 		else if(pDims[4]==0) glColor3ub((*pPset)[count].I, (*pPset)[count].I, (*pPset)[count].I);
-		else glColor3ub(100,100,100);
+		else glColor3ub( ((((*pPset)[count].id * 450) % 500 ) * 3 ) % 256, (*pPset)[count].id * 255 / maxid, maxid - ( ( ( 72 * (*pPset)[count].id ) % 13 ) * 900 ) % 256 );
 		glVertex3f( ( (*pPset)[count].x - pDims[1] ) / pDims[0]  * 2.f -1.f , ((*pPset)[count].z - pDims[3]) / pDims[0] * 2.f - 1.f, ( (*pPset)[count].y - pDims[2]) / pDims[0] * 2.f - 1.f );
 	}
 
@@ -53,7 +52,7 @@ void drawaxes(float *pxax, float *pyax, float *pzax){
 	}
 
 int main( int argc, char** argv ){
-	int input,speed=1;
+	int input,maxid,speed=1;
 	float sign=1.0f;
 	float xaxis[3]={1.f, 0.f, 0.f}, yaxis[3]={0.f, 1.f, 0.f}, zaxis[3]={0.f, 0.f, 1.f};
 	float cos1=cos( 1.f/180 * 3.141592 ), sin1=sin( 1.f/180 * 3.141592);
@@ -66,6 +65,11 @@ int main( int argc, char** argv ){
 	Points P;
 	
 	load_points(&P , dims);
+
+	for( int n = 0; n < P.size(); n++)
+		maxid = std::max(maxid,P[n].id);	
+
+	std::cout << "max id = " << maxid << std::endl;
 
 	input = time( NULL );
 	std::cout << "Initializing Graphics Window" << std::endl;	
@@ -97,7 +101,7 @@ int main( int argc, char** argv ){
 		//glClearColor( 0.160f, 0.0f, 0.120f, 0.0f);
 		glClearColor( 0.1f, 0.1f, 0.1f, 0.1f);
 		glClear( GL_COLOR_BUFFER_BIT );
-		resetPoints(&P, dims);
+		resetPoints(&P, dims, maxid);
 		drawaxes(xaxis, yaxis, zaxis);
 		glDrawArrays(GL_POINTS, 0, 3);
 		glDrawArrays(GL_LINES,0,3);

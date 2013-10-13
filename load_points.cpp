@@ -2,7 +2,8 @@
 
 void load_points(Points *pP, double *pDim){
 	point out;
-	std::ifstream PointFile ("testpoints.txt");
+	std::ifstream PointFile ("points1.txt");
+	std::ifstream IDFile ("ids.txt");
 	std::string value;
 	int index=0,xyz=0;
 	double xmax=0,ymax=0,zmax=0,xmin=100000000,ymin=10000000,zmin=10000000;
@@ -42,6 +43,14 @@ void load_points(Points *pP, double *pDim){
 
 
 	}	
+	index = 0;
+	while (IDFile.good() && (*pP).size()>index ){
+		getline(IDFile,value);		
+		(*pP)[index].id=atoi(value.c_str());				
+		index++;
+	}	
+
+
 
 	std::cout << "Point load finished" << std::endl;	
 	pDim[0]=std::max(xmax-xmin,std::max(ymax-ymin,zmax-zmin));
