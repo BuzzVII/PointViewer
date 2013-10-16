@@ -9,9 +9,9 @@
 #include <algorithm>
 
 struct point { 
-		double x,y,z,G;
-		int id,I,r,g,b;
-	};
+        double x,y,z,G;
+        int id,I,r,g,b;
+    };
 typedef std::vector<point> Points;
 
 void load_points(Points *pP, double *pDim);
